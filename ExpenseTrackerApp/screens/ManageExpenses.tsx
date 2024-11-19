@@ -1,11 +1,16 @@
-import React, { useContext, useLayoutEffect } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import { ExpensesContext } from "../store/expenses-context";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
+import { deleteExpense, storeExpense, updateExpense } from "../util/http";
+import LoadingOverlay from "../components/UI/LoadingOverlay";
 
 const ManageExpenses = ({ route, navigation }: any) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
   const expenseCtx = useContext(ExpensesContext);
 
   const editedExpenseId = route.params?.expenseId;
@@ -24,18 +29,32 @@ const ManageExpenses = ({ route, navigation }: any) => {
     navigation.goBack();
   }
 
-  function confirmHandler(expenseData: any) {
+  async function confirmHandler(expenseData: any) {
+    setIsSubmitting(true);
     if (isEditing) {
       expenseCtx.updateExpense(editedExpenseId, expenseData);
+      await updateExpense(editedExpenseId, expenseData);
     } else {
-      expenseCtx.addExpense(expenseData);
+      const id = await storeExpense(expenseData);
+      expenseCtx.addExpense( {...expenseData, id: id} );
     }
     navigation.goBack();
   }
 
-  function deleteExpenseHandler() {
-    expenseCtx.deleteExpense(editedExpenseId);
-    navigation.goBack();
+  async function deleteExpenseHandler() {
+    setIsSubmitting(true);
+    try{
+        expenseCtx.deleteExpense(editedExpenseId);
+        await deleteExpense(editedExpenseId);
+        navigation.goBack();
+    } catch (error){
+        setError("Could not delete");
+        setIsSubmitting(false);
+    }
+  }
+
+  if(isSubmitting){
+    return <LoadingOverlay />
   }
 
   return (
