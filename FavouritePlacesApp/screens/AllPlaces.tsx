@@ -4,6 +4,7 @@ import { useIsFocused } from "@react-navigation/native";
 import PlacesList from "../components/Places/PlacesList";
 import { RootStackParamList } from "../App";
 import Place from "../models/place";
+import { fetchPlaces } from "../util/database";
 
 type AllPlacesScreenProps = NativeStackScreenProps<RootStackParamList, "AllPlaces">;
 
@@ -13,10 +14,16 @@ function AllPlaces({ route }: AllPlacesScreenProps) {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    if (isFocused && route.params) {
-      setLoadedPlaces((currPlaces) => [...currPlaces, route.params.place]);
+    async function loadPlaces() {
+      console.log("Fetching all places...")
+      const places = await fetchPlaces();
+      setLoadedPlaces(places);
     }
-  }, [isFocused, route]);
+
+    if (isFocused) {
+      loadPlaces();
+    }
+  }, [isFocused]);
 
   return <PlacesList places={loadedPlaces} />;
 }

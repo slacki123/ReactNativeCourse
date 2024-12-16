@@ -9,11 +9,13 @@ import { Colors } from "./constants/colors";
 import Place from "./models/place";
 import { initDb } from "./util/database";
 import AppLoading from "expo-app-loading";
+import PlaceDetails from "./screens/PlaceDetails";
 
 export type RootStackParamList = {
-  AllPlaces: { place: Place };
+  AllPlaces: undefined;
   AddPlace?: { pickedLat: number; pickedLng: number };
-  Map: undefined; // Or { lat: number; lng: number } if you pass parameters to Map
+  Map: { initialLat?: number; initialLng?: number };
+  PlaceDetails: { placeId: string }
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -70,6 +72,9 @@ export default function App() {
           }}
         />
         <Stack.Screen name="Map" component={Map} />
+        <Stack.Screen name="PlaceDetails" component={PlaceDetails} options={{
+          title: 'Loading Place...'
+        }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

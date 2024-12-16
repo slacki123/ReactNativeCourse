@@ -5,12 +5,12 @@ import { Colors } from "../../constants/colors";
 
 type PlaceItemProps = {
   place: Place;
-  onSelect: () => void;
+  onSelect: (id: string) => void;
 };
 
 function PlaceItem({place, onSelect} : PlaceItemProps){
   return (
-    <Pressable style={({pressed}) => [styles.item, pressed && styles.pressed]} onPress={onSelect}>
+    <Pressable style={({pressed}) => [styles.item, pressed && styles.pressed]} onPress={() => onSelect(place.id)}>
         <Image style={styles.image} source={{uri: place.imageUri}} />
         <View style={styles.info}>
           <Text style={styles.title}>{place.title}</Text>

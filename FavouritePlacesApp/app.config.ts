@@ -7,6 +7,7 @@ export default {
         "expo-sqlite",
         {
           enableFTS: true, // Ensures FTS (Full Text Search) is enabled
+          useSQLCipher: false
         },
       ],
     ],

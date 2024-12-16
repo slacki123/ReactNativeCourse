@@ -7,9 +7,10 @@ class Place {
     public title: string,
     public imageUri: string,
     public address: string,
-    public location: LatLng
+    public location: LatLng,
+    id?: string // Optional id
   ) {
-    this.id = new Date().toISOString() + Math.random().toString();
+    this.id = id || new Date().toISOString() + Math.random().toString();
   }
 }
 
